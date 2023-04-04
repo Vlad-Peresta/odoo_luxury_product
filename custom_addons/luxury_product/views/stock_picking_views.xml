@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_picking_with_vip_tag_form" model="ir.ui.view">
+    <field name="name">stock.picking.vip.tag.form</field>
+    <field name="model">stock.picking</field>
+    <field eval="12" name="priority"/>
+    <field name="inherit_id" ref="stock.view_picking_form"/>
+    <field name="arch" type="xml">
+
+      <xpath expr="//group//group//field[@name='partner_id']" position="replace">
+        <span>
+          <field name="partner_id" nolabel="1"/>
+          <field name="vip_tag" widget="badge" nolabel="1"/>
+        </span>
+      </xpath>
+
+    </field>
+  </record>
+</odoo>
