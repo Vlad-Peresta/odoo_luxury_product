@@ -10,10 +10,10 @@
              position="after">
         <div class="col-12 col-lg-6 o_setting_box" id="luxury_product">
           <div class="o_setting_left_pane">
-            <field name="is_gift_product_applied"/>
+            <field name="x_is_gift_product_applied"/>
           </div>
           <div class="o_setting_right_pane">
-            <label for="is_gift_product_applied"/>
+            <label for="x_is_gift_product_applied"/>
             <div class="text-muted">
               Provide gift goods along with luxury products.
             </div>
