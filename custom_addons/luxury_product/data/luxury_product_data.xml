@@ -10,7 +10,7 @@
       <field name="categ_id" ref="product_category"/>
       <field name="standard_price">0.01</field>
       <field name="list_price">0.01</field>
-      <field name="detailed_type">consu</field>
+      <field name="detailed_type">product</field>
       <field name="weight">0.1</field>
       <field name="uom_id" ref="uom.product_uom_unit"/>
       <field name="uom_po_id" ref="uom.product_uom_unit"/>
