@@ -1,26 +1,9 @@
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    is_gift_product_applied = fields.Boolean(
-        "Apply gift for Luxury product", default=False
+    x_is_gift_product_applied = fields.Boolean(
+        related="company_id.x_is_gift_product_applied", readonly=False
     )
-
-    def set_values(self):
-        super(ResConfigSettings, self).set_values()
-        self.env["ir.config_parameter"].sudo().set_param(
-            "luxury_product.is_gift_product_applied", self.is_gift_product_applied
-        )
-
-    @api.model
-    def get_values(self):
-        res = super(ResConfigSettings, self).get_values()
-        params = self.env["ir.config_parameter"].sudo()
-        res.update(
-            is_gift_product_applied=params.get_param(
-                "luxury_product.is_gift_product_applied"
-            )
-        )
-        return res
