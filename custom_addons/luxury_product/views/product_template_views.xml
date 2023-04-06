@@ -9,7 +9,7 @@
     <field name="arch" type="xml">
 
       <field name="categ_id" position="after">
-        <field name="is_luxury_product"/>
+        <field name="x_is_luxury_product"/>
       </field>
 
     </field>
