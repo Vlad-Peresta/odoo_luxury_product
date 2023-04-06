@@ -1,17 +1,8 @@
-from odoo import models, fields
+from odoo import models
 
 
 class Picking(models.Model):
     _inherit = "stock.picking"
-
-    vip_tag = fields.Char(compute="_compute_vip_tag")
-
-    def _compute_vip_tag(self):
-        PartnerCategory = self.env["res.partner.category"]
-        for picking in self:
-            picking.vip_tag = PartnerCategory.search(
-                [("name", "=", "VIP")], limit=1
-            ).name
 
     def _get_vip_tag(self):
         PartnerCategory = self.env["res.partner.category"]
@@ -22,13 +13,13 @@ class Picking(models.Model):
         return PartnerCategory.create({"name": "VIP"})
 
     def button_validate(self):
-        for picking in self:
-            if (
-                picking._is_to_external_location()
-                and "VIP" not in picking.partner_id.category_id
+        for picking in self.filtered(
+            lambda picking_id: picking_id._is_to_external_location()
+            and "VIP" not in picking_id.partner_id.category_id.mapped("name")
+        ):
+            if picking.move_ids_without_package.filtered(
+                lambda move: move.product_id.product_tmpl_id.x_is_luxury_product
             ):
-                for move in picking.move_ids_without_package:
-                    if move.product_id.product_tmpl_id.is_luxury_product:
-                        picking.partner_id.category_id = [(4, self._get_vip_tag().id)]
+                picking.partner_id.category_id = [(4, self._get_vip_tag().id)]
 
         return super().button_validate()
