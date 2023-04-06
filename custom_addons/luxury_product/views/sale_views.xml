@@ -7,7 +7,7 @@
     <field name="arch" type="xml">
 
       <xpath expr="//notebook//tree//field[@name='name']" position="after">
-        <field name="is_luxury_product"/>
+        <field name="x_is_luxury_product"/>
       </xpath>
 
     </field>
