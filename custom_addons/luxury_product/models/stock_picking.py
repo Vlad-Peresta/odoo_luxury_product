@@ -8,9 +8,7 @@ class Picking(models.Model):
         PartnerCategory = self.env["res.partner.category"]
         vip_tag = PartnerCategory.search([("name", "=", "VIP")], limit=1)
 
-        if vip_tag.exists():
-            return vip_tag
-        return PartnerCategory.create({"name": "VIP"})
+        return vip_tag if vip_tag else PartnerCategory.create({"name": "VIP"})
 
     def button_validate(self):
         for picking in self.filtered(

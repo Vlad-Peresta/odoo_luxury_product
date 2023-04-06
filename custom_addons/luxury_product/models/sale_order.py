@@ -1,11 +1,11 @@
-from odoo import models, fields
+from odoo import models
 
 
 class SaleOrder(models.Model):
     _inherit = ["sale.order"]
 
     def action_confirm(self):
-        if fields.first(self).company_id.x_is_gift_product_applied:
+        if self.env.company.x_is_gift_product_applied:
             gift_product = self.env.ref("luxury_product.gift_product")
             for order in self.filtered(
                 lambda order_id: order_id.order_line.filtered(
