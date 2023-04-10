@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="res_config_settings_added_luxury_product_form_view" model="ir.ui.view">
+    <field name="name">res.config.settings.luxury.product.view.form</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+
+      <xpath expr="//div[hasclass('settings')]//div[@name='operations_setting_container']//div[@id='reception_report']"
+             position="after">
+        <div class="col-12 col-lg-6 o_setting_box" id="luxury_product">
+          <div class="o_setting_left_pane">
+            <field name="x_is_gift_product_applied"/>
+          </div>
+          <div class="o_setting_right_pane">
+            <label for="x_is_gift_product_applied"/>
+            <div class="text-muted">
+              Provide gift goods along with luxury products.
+            </div>
+          </div>
+        </div>
+      </xpath>
+
+    </field>
+  </record>
+</odoo>

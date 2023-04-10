@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="product_category" model="product.category">
+      <field name="name">Gift</field>
+    </record>
+
+    <record id="gift_product" model="product.product">
+      <field name="name">Gift product</field>
+      <field name="categ_id" ref="product_category"/>
+      <field name="standard_price">0.01</field>
+      <field name="list_price">0.01</field>
+      <field name="detailed_type">product</field>
+      <field name="weight">0.1</field>
+      <field name="uom_id" ref="uom.product_uom_unit"/>
+      <field name="uom_po_id" ref="uom.product_uom_unit"/>
+      <field name="default_code">GIFT_PR</field>
+    </record>
+
+  </data>
+</odoo>
