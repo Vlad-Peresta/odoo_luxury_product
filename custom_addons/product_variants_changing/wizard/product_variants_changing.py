@@ -6,7 +6,15 @@ class ProductVariantsChanging(models.TransientModel):
     _description = "Change attributes of the product"
 
     def _get_x_attribute_id_domain(self):
-        return [("product_tmpl_ids.id", "=", self.env.context.get("active_id"))]
+        return [
+            (
+                "id",
+                "in",
+                self.env["product.template"]
+                .browse(self.env.context.get("active_id"))
+                .attribute_line_ids.attribute_id.ids,
+            )
+        ]
 
     @api.onchange("x_attribute_id")
     def _onchange_get_x_old_attribute_value_id_domain(self):
@@ -14,19 +22,13 @@ class ProductVariantsChanging(models.TransientModel):
             "domain": {
                 "x_old_attribute_value_id": [
                     (
-                        "attribute_id.product_tmpl_ids.id",
-                        "=",
-                        self.env.context.get("active_id"),
-                    ),
-                    ("attribute_id.id", "=", self.x_attribute_id.id),
-                    (
                         "id",
                         "in",
                         self.env["product.template"]
                         .browse(self.env.context.get("active_id"))
-                        .mapped("attribute_line_ids.value_ids")
-                        .ids,
+                        .attribute_line_ids.value_ids.ids,
                     ),
+                    ("attribute_id.id", "=", self.x_attribute_id.id),
                 ]
             }
         }
@@ -37,9 +39,11 @@ class ProductVariantsChanging(models.TransientModel):
             "domain": {
                 "x_new_attribute_value_id": [
                     (
-                        "attribute_id.product_tmpl_ids.id",
-                        "=",
-                        self.env.context.get("active_id"),
+                        "id",
+                        "in",
+                        self.env["product.template"]
+                        .browse(self.env.context.get("active_id"))
+                        .attribute_line_ids.value_ids.ids,
                     ),
                     ("attribute_id.id", "=", self.x_attribute_id.id),
                     ("id", "!=", self.x_old_attribute_value_id.id),
