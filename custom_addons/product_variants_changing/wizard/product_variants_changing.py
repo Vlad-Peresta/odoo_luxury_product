@@ -1,26 +1,70 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class ProductVariantsChanging(models.TransientModel):
     _name = "product.variants.changing"
     _description = "Change attributes of the product"
 
-    def _get_default_x_active_template_id(self):
-        return self.env.context.get("active_id")
+    def _get_x_attribute_id_domain(self):
+        return [("product_tmpl_ids.id", "=", self.env.context.get("active_id"))]
+
+    @api.onchange("x_attribute_id")
+    def _onchange_get_x_old_attribute_value_id_domain(self):
+        return {
+            "domain": {
+                "x_old_attribute_value_id": [
+                    (
+                        "attribute_id.product_tmpl_ids.id",
+                        "=",
+                        self.env.context.get("active_id"),
+                    ),
+                    ("attribute_id.id", "=", self.x_attribute_id.id),
+                    (
+                        "id",
+                        "in",
+                        self.env["product.template"]
+                        .browse(self.env.context.get("active_id"))
+                        .mapped("attribute_line_ids.value_ids")
+                        .ids,
+                    ),
+                ]
+            }
+        }
+
+    @api.onchange("x_attribute_id", "x_old_attribute_value_id")
+    def _onchange_get_x_new_attribute_value_id_domain(self):
+        return {
+            "domain": {
+                "x_new_attribute_value_id": [
+                    (
+                        "attribute_id.product_tmpl_ids.id",
+                        "=",
+                        self.env.context.get("active_id"),
+                    ),
+                    ("attribute_id.id", "=", self.x_attribute_id.id),
+                    ("id", "!=", self.x_old_attribute_value_id.id),
+                ]
+            }
+        }
 
     x_attribute_id = fields.Many2one(
         "product.attribute",
         string="Product variant",
+        required=True,
+        domain=_get_x_attribute_id_domain,
     )
     x_old_attribute_value_id = fields.Many2one(
         "product.attribute.value",
         string="Old product variant",
+        required=True,
+        domain=_onchange_get_x_old_attribute_value_id_domain,
     )
     x_new_attribute_value_id = fields.Many2one(
-        "product.attribute.value", string="New product variant"
+        "product.attribute.value",
+        string="New product variant",
+        required=True,
+        domain=_onchange_get_x_new_attribute_value_id_domain,
     )
-
-    x_active_template_id = fields.Char(default=_get_default_x_active_template_id)
 
     def change_product_attribute(self):
         with self.env.cr.savepoint():
@@ -36,7 +80,7 @@ class ProductVariantsChanging(models.TransientModel):
                 """,
                 (
                     self.x_new_attribute_value_id.id,
-                    self.x_active_template_id,
+                    self.env.context.get("active_id"),
                     self.x_attribute_id.id,
                     self.x_old_attribute_value_id.id,
                 ),
@@ -53,7 +97,7 @@ class ProductVariantsChanging(models.TransientModel):
                 (
                     self.x_new_attribute_value_id.id,
                     self.x_old_attribute_value_id.id,
-                    self.x_active_template_id,
+                    self.env.context.get("active_id"),
                     self.x_attribute_id.id,
                 ),
             )
