@@ -6,11 +6,19 @@
       <form>
         <group>
           <field name="x_attribute_id"/>
-          <field name="x_old_attribute_value_id"/>
-          <field name="x_new_attribute_value_id"/>
+          <field name="x_old_attribute_value_id"
+                 attrs="{'invisible': [('x_attribute_id', '=', False)]}"
+          />
+          <field name="x_new_attribute_value_id"
+                 attrs="{'invisible': [('x_old_attribute_value_id', '=', False)]}"
+          />
         </group>
         <footer>
-          <button string='Change attribute' name="change_product_attribute" type="object" class="btn-primary"/>
+          <button string='Change attribute'
+                  name="change_product_attribute"
+                  type="object"
+                  class="btn-primary"
+          />
         </footer>
       </form>
     </field>

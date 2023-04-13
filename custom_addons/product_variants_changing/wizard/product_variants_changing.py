@@ -38,13 +38,6 @@ class ProductVariantsChanging(models.TransientModel):
         return {
             "domain": {
                 "x_new_attribute_value_id": [
-                    (
-                        "id",
-                        "in",
-                        self.env["product.template"]
-                        .browse(self.env.context.get("active_id"))
-                        .attribute_line_ids.value_ids.ids,
-                    ),
                     ("attribute_id.id", "=", self.x_attribute_id.id),
                     ("id", "!=", self.x_old_attribute_value_id.id),
                 ]
