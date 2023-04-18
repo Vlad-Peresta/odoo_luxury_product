@@ -5,6 +5,7 @@
     <field name="arch" type="xml">
       <form>
         <group>
+          <field name="x_allowed_value_ids" invisible="1"/>
           <field name="x_attribute_id"/>
           <field name="x_old_attribute_value_id"
                  attrs="{'invisible': [('x_attribute_id', '=', False)]}"
