@@ -63,37 +63,49 @@ class ProductVariantsChanging(models.TransientModel):
         self.new_attribute_value_id = False
 
     def change_product_attribute(self):
-        with self.env.cr.savepoint():
-            self.env.cr.execute(
-                '''
-                UPDATE product_attribute_value_product_template_attribute_line_rel AS rel
-                SET product_attribute_value_id = %s
-                FROM product_template_attribute_line AS attribute_line
-                WHERE rel.product_template_attribute_line_id = attribute_line.id AND
-                attribute_line.product_tmpl_id = %s AND
-                attribute_line.attribute_id = %s AND
-                rel.product_attribute_value_id = %s
-                ''',
-                (
-                    self.new_attribute_value_id.id,
-                    self.env.context.get('active_id'),
-                    self.attribute_id.id,
-                    self.old_attribute_value_id.id,
-                ),
-            )
+        try:
+            with self.env.cr.savepoint():
+                self.env.cr.execute(
+                    '''
+                    UPDATE product_attribute_value_product_template_attribute_line_rel AS rel
+                    SET product_attribute_value_id = %s
+                    FROM product_template_attribute_line AS attribute_line
+                    WHERE rel.product_template_attribute_line_id = attribute_line.id AND
+                    attribute_line.product_tmpl_id = %s AND
+                    attribute_line.attribute_id = %s AND
+                    rel.product_attribute_value_id = %s
+                    ''',
+                    (
+                        self.new_attribute_value_id.id,
+                        self.env.context.get('active_id'),
+                        self.attribute_id.id,
+                        self.old_attribute_value_id.id,
+                    ),
+                )
 
-            self.env.cr.execute(
-                '''
-                UPDATE product_template_attribute_value
-                SET product_attribute_value_id = %s
-                WHERE product_attribute_value_id = %s AND
-                product_tmpl_id = %s AND
-                attribute_id = %s
-                ''',
-                (
-                    self.new_attribute_value_id.id,
-                    self.old_attribute_value_id.id,
-                    self.env.context.get('active_id'),
-                    self.attribute_id.id,
-                ),
-            )
+                self.env.cr.execute(
+                    '''
+                    UPDATE product_template_attribute_value
+                    SET product_attribute_value_id = %s
+                    WHERE product_attribute_value_id = %s AND
+                    product_tmpl_id = %s AND
+                    attribute_id = %s
+                    ''',
+                    (
+                        self.new_attribute_value_id.id,
+                        self.old_attribute_value_id.id,
+                        self.env.context.get('active_id'),
+                        self.attribute_id.id,
+                    ),
+                )
+        except Exception:
+            raise
+        else:
+            return {
+                'effect': {
+                    'fadeout': 'slow',
+                    'message': 'Product variant successfully changed!',
+                    'img_url': '/web/static/img/smile.svg',
+                    'type': 'rainbow_man',
+                }
+            }
