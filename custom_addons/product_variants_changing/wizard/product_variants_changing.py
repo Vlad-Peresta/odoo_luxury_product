@@ -5,7 +5,7 @@ class ProductVariantsChanging(models.TransientModel):
     _name = 'product.variants.changing'
     _description = 'Change attributes of the product'
 
-    def _get_x_attribute_id_domain(self):
+    def _get_attribute_id_domain(self):
         return [
             (
                 'id',
@@ -16,31 +16,31 @@ class ProductVariantsChanging(models.TransientModel):
             )
         ]
 
-    x_allowed_value_ids = fields.Many2many(
-        'product.attribute.value', compute='_compute_x_allowed_value'
+    allowed_value_ids = fields.Many2many(
+        'product.attribute.value', compute='_compute_allowed_value'
     )
-    x_attribute_id = fields.Many2one(
+    attribute_id = fields.Many2one(
         'product.attribute',
         string='Product variant',
         required=True,
-        domain=_get_x_attribute_id_domain
+        domain=_get_attribute_id_domain
     )
-    x_old_attribute_value_id = fields.Many2one(
+    old_attribute_value_id = fields.Many2one(
         'product.attribute.value',
         string='Old product variant',
         required=True,
-        domain="[('id', 'in', x_allowed_value_ids)]"
+        domain="[('id', 'in', allowed_value_ids)]"
     )
-    x_new_attribute_value_id = fields.Many2one(
+    new_attribute_value_id = fields.Many2one(
         'product.attribute.value',
         string='New product variant',
         required=True,
-        domain="[('attribute_id', '=', x_attribute_id), ('id', '!=', x_old_attribute_value_id),]"
+        domain="[('attribute_id', '=', attribute_id), ('id', '!=', old_attribute_value_id),]"
     )
 
-    @api.depends('x_attribute_id')
-    def _compute_x_allowed_value(self):
-        self.x_allowed_value_ids = self.env['product.attribute.value'].search(
+    @api.depends('attribute_id')
+    def _compute_allowed_value(self):
+        self.allowed_value_ids = self.env['product.attribute.value'].search(
             [
                 (
                     'id',
@@ -49,18 +49,18 @@ class ProductVariantsChanging(models.TransientModel):
                     .browse(self.env.context.get('active_id'))
                     .attribute_line_ids.value_ids.ids,
                 ),
-                ('attribute_id.id', '=', self.x_attribute_id.id),
+                ('attribute_id.id', '=', self.attribute_id.id),
             ]
         )
 
-    @api.onchange('x_attribute_id')
-    def _onchange_x_old_new_attribute_value_id(self):
-        self.x_old_attribute_value_id = False
-        self.x_new_attribute_value_id = False
+    @api.onchange('attribute_id')
+    def _onchange_old_new_attribute_value_id(self):
+        self.old_attribute_value_id = False
+        self.new_attribute_value_id = False
 
-    @api.onchange('x_old_attribute_value_id')
-    def _onchange_x_new_attribute_value_id(self):
-        self.x_new_attribute_value_id = False
+    @api.onchange('old_attribute_value_id')
+    def _onchange_new_attribute_value_id(self):
+        self.new_attribute_value_id = False
 
     def change_product_attribute(self):
         with self.env.cr.savepoint():
@@ -75,10 +75,10 @@ class ProductVariantsChanging(models.TransientModel):
                 rel.product_attribute_value_id = %s
                 ''',
                 (
-                    self.x_new_attribute_value_id.id,
+                    self.new_attribute_value_id.id,
                     self.env.context.get('active_id'),
-                    self.x_attribute_id.id,
-                    self.x_old_attribute_value_id.id,
+                    self.attribute_id.id,
+                    self.old_attribute_value_id.id,
                 ),
             )
 
@@ -91,9 +91,9 @@ class ProductVariantsChanging(models.TransientModel):
                 attribute_id = %s
                 ''',
                 (
-                    self.x_new_attribute_value_id.id,
-                    self.x_old_attribute_value_id.id,
+                    self.new_attribute_value_id.id,
+                    self.old_attribute_value_id.id,
                     self.env.context.get('active_id'),
-                    self.x_attribute_id.id,
+                    self.attribute_id.id,
                 ),
             )
