@@ -20,6 +20,7 @@
                   type='object'
                   class='btn-primary'
           />
+          <button special='cancel' string='Cancel' class='btn-primary'/>
         </footer>
       </form>
     </field>
