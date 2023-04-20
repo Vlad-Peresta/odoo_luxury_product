@@ -1,37 +1,37 @@
 <odoo>
-  <record id="view_form_product_variants_changing" model="ir.ui.view">
-    <field name="name">Change product variants</field>
-    <field name="model">product.variants.changing</field>
-    <field name="arch" type="xml">
+  <record id='view_form_product_variants_changing' model='ir.ui.view'>
+    <field name='name'>Change product variants</field>
+    <field name='model'>product.variants.changing</field>
+    <field name='arch' type='xml'>
       <form>
         <group>
-          <field name="x_allowed_value_ids" invisible="1"/>
-          <field name="x_attribute_id"/>
-          <field name="x_old_attribute_value_id"
+          <field name='x_allowed_value_ids' invisible='1'/>
+          <field name='x_attribute_id'/>
+          <field name='x_old_attribute_value_id'
                  attrs="{'invisible': [('x_attribute_id', '=', False)]}"
           />
-          <field name="x_new_attribute_value_id"
+          <field name='x_new_attribute_value_id'
                  attrs="{'invisible': [('x_old_attribute_value_id', '=', False)]}"
           />
         </group>
         <footer>
           <button string='Change attribute'
-                  name="change_product_attribute"
-                  type="object"
-                  class="btn-primary"
+                  name='change_product_attribute'
+                  type='object'
+                  class='btn-primary'
           />
         </footer>
       </form>
     </field>
   </record>
 
-  <record id="action_product_variants_changing" model="ir.actions.act_window">
-    <field name="name">Change product variants</field>
-    <field name="res_model">product.variants.changing</field>
-    <field name="view_mode">form</field>
-    <field name="binding_model_id" ref="product.model_product_template"/>
-    <field name="binding_view_types">form</field>
-    <field name="target">new</field>
+  <record id='action_product_variants_changing' model='ir.actions.act_window'>
+    <field name='name'>Change product variants</field>
+    <field name='res_model'>product.variants.changing</field>
+    <field name='view_mode'>form</field>
+    <field name='binding_model_id' ref='product.model_product_template'/>
+    <field name='binding_view_types'>form</field>
+    <field name='target'>new</field>
   </record>
 
 </odoo>
